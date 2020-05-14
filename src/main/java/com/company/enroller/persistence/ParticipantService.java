@@ -15,7 +15,6 @@ import com.company.enroller.model.Participant;
 
 
 @Component("participantService")
-
 public class ParticipantService {
 
 
@@ -51,4 +50,11 @@ public class ParticipantService {
         session.delete(participant);
         transaction.commit();
     }
+
+    public Participant update(Participant participant) {
+            Transaction transaction = this.session.beginTransaction();
+            session.update(participant);
+            transaction.commit();
+            return participant;
+        }
 }
