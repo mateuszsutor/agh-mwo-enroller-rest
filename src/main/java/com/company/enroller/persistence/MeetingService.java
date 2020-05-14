@@ -2,6 +2,7 @@ package com.company.enroller.persistence;
 
 import java.util.Collection;
 
+import com.company.enroller.model.Participant;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,7 +23,16 @@ public class MeetingService {
 		return session.createCriteria(Meeting.class).list();
 	}
 
-	public Meeting findById(Long id) {
+	public Meeting findByIdMeeting(Long id) {
 		return (Meeting) session.get(Meeting.class, id);
 	}
+
+	public Meeting add(Meeting meeting) {
+		Transaction transaction = this.session.beginTransaction();
+		session.save(meeting);
+		transaction.commit();
+
+		return meeting;
+	}
+
 }
