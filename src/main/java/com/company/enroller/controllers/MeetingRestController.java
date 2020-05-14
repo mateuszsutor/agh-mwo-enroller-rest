@@ -24,7 +24,7 @@ public class MeetingRestController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getMeetings() {
         Collection<Meeting> meetings = meetingService.getAll();
-        return new ResponseEntity<Collection<Meeting>>(meetings, HttpStatus.OK);
+        return new ResponseEntity<>(meetings, HttpStatus.OK);
     }
 
 
@@ -34,20 +34,19 @@ public class MeetingRestController {
         if (meeting == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Meeting>(meeting, HttpStatus.OK);
+        return new ResponseEntity<>(meeting, HttpStatus.OK);
     }
-
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> registerMeeting(@RequestBody Meeting meeting) {
         Meeting foundMeeting = meetingService.findByIdMeeting(meeting.getId());
         if (foundMeeting != null) {
-            return new ResponseEntity<String>("Unable to register. Meeting with login "
+            return new ResponseEntity<>("Unable to register. Meeting with login "
                     + meeting.getId()
                     + " already exists", HttpStatus.CONFLICT);
         }
         meetingService.add(meeting);
-        return new ResponseEntity<Meeting>(meeting, HttpStatus.CREATED);
+        return new ResponseEntity<>(meeting, HttpStatus.CREATED);
     }
 }
 
