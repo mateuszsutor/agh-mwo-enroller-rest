@@ -21,4 +21,8 @@ public class MeetingService {
 	public Collection<Meeting> getAll() {
 		return session.createCriteria(Meeting.class).list();
 	}
+
+	public Meeting findById(Long id) {
+		return (Meeting) session.get(Meeting.class, id);
+	}
 }
