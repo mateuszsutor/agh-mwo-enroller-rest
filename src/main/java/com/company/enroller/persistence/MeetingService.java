@@ -50,6 +50,16 @@ public class MeetingService {
         return meeting;
     }
 
+    public Meeting deleteParticipantToMeeting(long id, Participant participant) {
+        Transaction transaction = this.session.beginTransaction();
+        Meeting meeting = findByIdMeeting(id);
+        meeting.removeParticipant(participant);
+        session.merge(meeting);
+        transaction.commit();
+
+        return meeting;
+    }
+
     public void delete(Meeting meeting) {
         Transaction transaction = this.session.beginTransaction();
         session.delete(meeting);

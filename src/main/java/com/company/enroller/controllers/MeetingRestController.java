@@ -42,7 +42,7 @@ public class MeetingRestController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<?> registerMeeting(@RequestBody Meeting meeting) {
+    public ResponseEntity<?> createNewMeeting(@RequestBody Meeting meeting) {
         Meeting foundMeeting = meetingService.findByIdMeeting(meeting.getId());
         if (foundMeeting != null) {
             return new ResponseEntity<>("Unable to register. Meeting with login "
@@ -55,9 +55,13 @@ public class MeetingRestController {
 
     @RequestMapping(value = "{id}/participants", method = RequestMethod.GET)
     public ResponseEntity<?> getParticipants(@PathVariable("id") Long id) {
-        Meeting meeting = meetingService.findByIdMeeting(id);
 
-        return new ResponseEntity<Collection<Participant>>(meeting.getParticipants(), HttpStatus.ACCEPTED);
+        if (meetingService.findByIdMeeting(id) == null) {
+            return new ResponseEntity("Meeting with id " + id + " does not exist." , HttpStatus.NOT_FOUND );
+        } else {
+            Collection<Participant> participants = meetingService.getEnrolled(id);
+            return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.ACCEPTED);
+        }
     }
 
 
@@ -74,6 +78,7 @@ public class MeetingRestController {
         }
     }
 
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteMeeting(@PathVariable("id") Long id) {
         Meeting meeting = meetingService.findByIdMeeting(id);
@@ -85,7 +90,10 @@ public class MeetingRestController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateMeeting(@PathVariable("id") Long id, @RequestBody Meeting updatedMeeting) {
+    public ResponseEntity<?> updateMeeting(
+            @PathVariable("id") Long id,
+            @RequestBody Meeting updatedMeeting) {
+
         Meeting foundMeeting = meetingService.findByIdMeeting(id);
         if (foundMeeting == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -100,6 +108,28 @@ public class MeetingRestController {
         meetingService.update(foundMeeting);
         return new ResponseEntity(foundMeeting, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/{id}/participants", method = RequestMethod.PUT)
+    public ResponseEntity<?> removeParticipantFromMeeting(
+            @PathVariable("id") long id,
+            @RequestBody Participant participantToRemove) {
+
+        Participant participant = participantService.findByLogin(participantToRemove.getLogin());
+        Collection<Participant> participants = meetingService.getEnrolled(id);
+
+        if (participant == null) {
+            return new ResponseEntity("A participant with login " + participantToRemove.getLogin()
+                    + " does not exist.", HttpStatus.NOT_FOUND);
+
+        } else if (!participants.contains(participant)) {
+            return new ResponseEntity("A participant with login " + participantToRemove.getLogin()
+                    + " was not register for this meeting", HttpStatus.NOT_FOUND);
+        } else {
+            meetingService.deleteParticipantToMeeting(id, participant);
+            return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.OK);
+        }
+    }
+
 }
 
 
