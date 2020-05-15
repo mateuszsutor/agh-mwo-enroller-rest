@@ -22,6 +22,9 @@ public class MeetingRestController {
     @Autowired
     MeetingService meetingService;
 
+    @Autowired
+    ParticipantService participantService;
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getMeetings() {
         Collection<Meeting> meetings = meetingService.getAll();
@@ -48,6 +51,27 @@ public class MeetingRestController {
         }
         meetingService.add(meeting);
         return new ResponseEntity<>(meeting, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "{id}/participants", method = RequestMethod.GET)
+    public ResponseEntity<?> getParticipants(@PathVariable("id") Long id) {
+        Meeting meeting = meetingService.findByIdMeeting(id);
+
+        return new ResponseEntity<Collection<Participant>>(meeting.getParticipants(), HttpStatus.ACCEPTED);
+    }
+
+
+    @RequestMapping(value = "/{id}/participants", method = RequestMethod.POST)
+    public ResponseEntity<?> addParticipantToMeeting(@PathVariable("id") long id, @RequestBody Participant enrolledParticipant) {
+        Participant participant = participantService.findByLogin(enrolledParticipant.getLogin());
+        if (participant == null) {
+            return new ResponseEntity("A participant with login " + enrolledParticipant.getLogin() + " does not exist.",
+                    HttpStatus.NOT_FOUND);
+        } else {
+            meetingService.enrollParticipantToMeeting(id, participant);
+            Collection<Participant> participants = meetingService.getEnrolled(id);
+            return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.OK);
+        }
     }
 }
 
