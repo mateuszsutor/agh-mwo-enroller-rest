@@ -57,4 +57,9 @@ public class MeetingService {
     }
 
 
+    public void update(Meeting foundMeeting) {
+        Transaction transaction = this.session.beginTransaction();
+        session.update(foundMeeting);
+        transaction.commit();
+    }
 }
