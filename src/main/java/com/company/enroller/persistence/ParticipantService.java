@@ -17,24 +17,19 @@ import com.company.enroller.model.Participant;
 @Component("participantService")
 public class ParticipantService {
 
-
     Session session;
-
 
     public ParticipantService() {
         session = DatabaseConnector.getInstance().getSession();
     }
 
-
     public Collection<Participant> getAll() {
         return session.createCriteria(Participant.class).list();
     }
 
-
     public Participant findByLogin(String login) {
         return (Participant) session.get(Participant.class, login);
     }
-
 
     public Participant add(Participant participant) {
         Transaction transaction = this.session.beginTransaction();
@@ -44,7 +39,6 @@ public class ParticipantService {
         return participant;
     }
 
-
     public void delete(Participant participant) {
         Transaction transaction = this.session.beginTransaction();
         session.delete(participant);
@@ -52,9 +46,9 @@ public class ParticipantService {
     }
 
     public Participant update(Participant participant) {
-            Transaction transaction = this.session.beginTransaction();
-            session.update(participant);
-            transaction.commit();
-            return participant;
-        }
+        Transaction transaction = this.session.beginTransaction();
+        session.update(participant);
+        transaction.commit();
+        return participant;
+    }
 }

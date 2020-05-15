@@ -31,7 +31,6 @@ public class MeetingRestController {
         return new ResponseEntity<>(meetings, HttpStatus.OK);
     }
 
-
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getMeeting(@PathVariable("id") Long id) {
         Meeting meeting = meetingService.findByIdMeeting(id);
@@ -64,7 +63,6 @@ public class MeetingRestController {
         }
     }
 
-
     @RequestMapping(value = "/{id}/participants", method = RequestMethod.POST)
     public ResponseEntity<?> addParticipantToMeeting(@PathVariable("id") long id, @RequestBody Participant enrolledParticipant) {
         Participant participant = participantService.findByLogin(enrolledParticipant.getLogin());
@@ -77,7 +75,6 @@ public class MeetingRestController {
             return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.OK);
         }
     }
-
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteMeeting(@PathVariable("id") Long id) {
@@ -129,7 +126,6 @@ public class MeetingRestController {
             return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.OK);
         }
     }
-
 }
 
 
